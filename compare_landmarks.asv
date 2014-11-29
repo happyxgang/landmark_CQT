@@ -1,0 +1,42 @@
+close all;
+name = 'ÕÅÉØº­ - ÒþÐÎµÄ³á°ò';
+
+dens = 10;
+[DQ,SR] = wavread(['H:\TestWave\' name '.wav']);
+[d,SRO] = wavread(['H:\CarRecord\' name '.wav']);
+if (SR ~= SRO)
+  DQ = resample(DQ,SRO,SR);
+end
+r=xcorr(DQ(1:2*SRO),d(1:2*SRO));
+start = find(r==max(r));
+
+
+Lq = find_landmarks(DQ,SR0,dens);
+subplot(211)
+show_landmarks(DQ,SR,Lq);
+title(['Original ' name]);
+
+
+
+
+Ld = find_landmarks(d,SRO,dens);
+subplot(212)
+show_landmarks(d,SRO,Ld);
+title(['Record ' name]);
+
+
+figure(2);
+
+[d,SRO] = wavread(['H:\CarRecord\' name '.wav']);
+[Ld,Sd,Td,maxesd] = find_CQTlandmarks(d,SRO,dens);
+subplot(212)
+show_CQTlandmarks(d,SRO,Ld);
+title(['Record ' name]);
+
+[DQ,SR] = wavread(['H:\TestWave\' name '.wav']);
+[Lq,Sq,Tq,maxesq] = find_CQTlandmarks(DQ,SR,dens);
+subplot(211)
+show_CQTlandmarks(DQ,SR,Lq);
+title(['Original ' name]);
+
+
