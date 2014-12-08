@@ -11,7 +11,7 @@ function [L,S,T,maxes] = find_CQTlandmarks(D,SR,N,bp)
 
 
 if nargin < 4;  N = 7; bp = 1; end %默认为 7 得到掩盖因子 a_dec = 0.998
-
+global Parameters;
 % 本算法依赖于查询音频与音频库中音频具有一定数量的相同显著点。
 % 显著点密度越大，越容易找到匹配（意味更短长度和音质更差的仍可匹配），
 % 但是指纹库的规模将增大
@@ -20,27 +20,31 @@ if nargin < 4;  N = 7; bp = 1; end %默认为 7 得到掩盖因子 a_dec = 0.998
 %  A.  找出局部最大点的个数，其取决于
 
 f_sd=20;
+f_sd = Parameters('f_sd');
 
 a_dec=0.995;
-
+a_dec = Parameters('a_dec');
 %    A.3 每帧允许的最大的峰值点个数
 maxpksperframe = 30;
-
+maxpksperframe  = Parameters('maxpksperframe');
 %    A.4 高通滤波器参数，接近1意味只滤除缓慢变化部分
 hpf_pole = 0.98;
-
+hpf_pole = Parameters('hpf_pole');
 %  B. 每个显著点形成的点对数量. 频谱图上目标区域的大小
 % 设定频率方向的大小
 targetdf = 31;  
-
+targetdf = Parameters('target_df');
 % 设定时间方向的大小
 targetdt = 63; 
-
+targetdt = Parameters('target_dt');
 verbose = 0;
 
 % 预设保留最大点的数量
 maxespersec = 20;
+maxexpersec = Parameters('maxespersec');
 
+%是否使用bp
+bp = Parameters('use_bp');
 
 % 将音频 D 转化为单声道
 [nr,nc] = size(D);

@@ -34,7 +34,7 @@ n = length(dir_files);
 count = 0;
 fd = fopen('result.txt','w+');
 duration = 10;
-
+duration = Parameters('durationi');
 for k=1:n
     %&& (dir_files(k).name(end-3,end) == 'wav'
     if (length(dir_files(k).name) > 4) && (strcmp(dir_files(k).name(end-2:end), 'wav'))
