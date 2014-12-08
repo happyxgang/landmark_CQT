@@ -1,4 +1,4 @@
-function [R,L] = match_query(D,SR,IX)
+function [R,L] = match_query_CQT(D,SR,IX)
 % [R,L] = match_query(D,SR,IX)
 %     从指纹库中匹配音频D
 %   输入：
@@ -28,17 +28,17 @@ if size(D,2) == 2
   D = mean(D,2);
 end
 
-Lq = find_landmarks(D,SR, dens);
+Lq = find_CQTlandmarks(D,SR, dens);
 
 % 提取待查询音频的时间偏移所得到的显著点
 landmarks_hopt = 0.032;
-Lq = [Lq;find_landmarks(D(round(landmarks_hopt/8*SR):end),SR, dens)];
-Lq = [Lq;find_landmarks(D(round(landmarks_hopt/4*SR):end),SR, dens)];
-Lq = [Lq;find_landmarks(D(round(3*landmarks_hopt/8*SR):end),SR, dens)];
-Lq = [Lq;find_landmarks(D(round(landmarks_hopt/2*SR):end),SR, dens)];
-Lq = [Lq;find_landmarks(D(round(5*landmarks_hopt/8*SR):end),SR, dens)];
-Lq = [Lq;find_landmarks(D(round(3*landmarks_hopt/4*SR):end),SR, dens)];
-Lq = [Lq;find_landmarks(D(round(7*landmarks_hopt/8*SR):end),SR, dens)];
+Lq = [Lq;find_CQTlandmarks(D(round(landmarks_hopt/8*SR):end),SR, dens)];
+Lq = [Lq;find_CQTlandmarks(D(round(landmarks_hopt/4*SR):end),SR, dens)];
+Lq = [Lq;find_CQTlandmarks(D(round(3*landmarks_hopt/8*SR):end),SR, dens)];
+Lq = [Lq;find_CQTlandmarks(D(round(landmarks_hopt/2*SR):end),SR, dens)];
+Lq = [Lq;find_CQTlandmarks(D(round(5*landmarks_hopt/8*SR):end),SR, dens)];
+Lq = [Lq;find_CQTlandmarks(D(round(3*landmarks_hopt/4*SR):end),SR, dens)];
+Lq = [Lq;find_CQTlandmarks(D(round(7*landmarks_hopt/8*SR):end),SR, dens)];
 
 Hq = unique(landmark2hash(Lq), 'rows');
 disp(['landmarks ',num2str(size(Lq,1)),' -> ', num2str(size(Hq,1)),' hashes']);

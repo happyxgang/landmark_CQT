@@ -1,5 +1,5 @@
-function [L,S,T,maxes] = find_CQTlandmarks(D,SR,N,bp)
-% [L,S,T,maxes] = find_CQTlandmarks(D,SR,N)
+function [L,S,T,maxes] = find_landmarks_ga(D,SR,N)
+% [L,S,T,maxes] = find_landmarks(D,SR,N)
 %   对音频波形D提取出频谱的显著点集合L
 %   输入：
 %   D 音频波形； SR 采样率； N 哈希密度（默认每秒生成5个）
@@ -10,7 +10,7 @@ function [L,S,T,maxes] = find_CQTlandmarks(D,SR,N,bp)
 %   maxes 所提取峰值点的时频位置
 
 
-if nargin < 4;  N = 7; bp = 1; end %默认为 7 得到掩盖因子 a_dec = 0.998
+if nargin < 3;  N = 7;  end %默认为 7 得到掩盖因子 a_dec = 0.998
 
 % 本算法依赖于查询音频与音频库中音频具有一定数量的相同显著点。
 % 显著点密度越大，越容易找到匹配（意味更短长度和音质更差的仍可匹配），
@@ -18,13 +18,27 @@ if nargin < 4;  N = 7; bp = 1; end %默认为 7 得到掩盖因子 a_dec = 0.998
 %
 % 影响所提取显著点个数的因素：
 %  A.  找出局部最大点的个数，其取决于
+%    A.1 扩散函数的宽度，当提取出一个显著点时用于抑制相邻点，即令若干相邻点幅度衰落
+f_sd = 30;
 
-f_sd=20;
-
-a_dec=0.995;
+%    A.2 掩盖因子a_dec，当提取出一个显著点时用于抑制相邻点，即令相邻点幅度衰落的程度
+% a_dec = 0.998;
+a_dec = 1-0.01*(N/35);
+% 0.999 -> 2.5
+% 0.998 -> 5 hash/sec
+% 0.997 -> 10 hash/sec
+% 0.996 -> 14 hash/sec
+% 0.995 -> 18
+% 0.994 -> 22
+% 0.993 -> 27
+% 0.992 -> 30
+% 0.991 -> 33
+% 0.990 -> 37
+% 0.98  -> 67
+% 0.97  -> 97
 
 %    A.3 每帧允许的最大的峰值点个数
-maxpksperframe = 30;
+maxpksperframe = 5;
 
 %    A.4 高通滤波器参数，接近1意味只滤除缓慢变化部分
 hpf_pole = 0.98;
@@ -36,11 +50,8 @@ targetdf = 31;
 % 设定时间方向的大小
 targetdt = 63; 
 
+
 verbose = 0;
-
-% 预设保留最大点的数量
-maxespersec = 20;
-
 
 % 将音频 D 转化为单声道
 [nr,nc] = size(D);
@@ -64,35 +75,22 @@ end
 fft_ms = 64;
 fft_hop = 32;
 nfft = round(targetSR/1000*fft_ms);
-S = abs(specgram(D,nfft,targetSR,nfft,nfft-round(targetSR/1000*fft_hop)));
-% % 转化为对数形式
- Smax = max(S(:));
- %S = 10*log(max(Smax/1e6,S));
-% % 将频谱幅度转化为0均值，以便高通滤波
- %S = S - mean(S(:));
+%S = abs(specgram(D,nfft,targetSR,nfft,nfft-round(targetSR/1000*fft_hop)));
 
-% 生成映射矩阵
-% [M,N] = logfmap(257,6,129);
-[M,N] = logfmap(257,6,65);
-% 65 对应 162 log-F bins
-% 129 对应 413 log-F bins
-% 257 对应 1006 log-F bins
-% 将257 FFT bins 扩展为 162 log-F bins
-% 进行映射
-MS = M*S;
+[S,F] = gammatonegram(D,targetSR);
+S = abs(S);
 
-S = MS;
-
-% % 转化为对数形式
- Smax = max(S(:));
- 
- S = 10*log(max(Smax/1e6,S));
-% % 将频谱幅度转化为0均值，以便高通滤波
- S = S - mean(S(:));
+% 转化为对数形式
+Smax = max(S(:));
+S = log(max(Smax/1e6,S));
+% 将频谱幅度转化为0均值，以便高通滤波
+S = S - mean(S(:));
 % 对幅度谱应用高通滤波，消除平缓波动，强化突然跳动
- %S = (filter([1 -1],[1 -hpf_pole],S')');
+S = (filter([1 -1],[1 -hpf_pole],S')');
 
 
+% 预设保留最大点的数量
+maxespersec = 30;
 
 ddur = length(D)/targetSR;
 nmaxkeep = round(maxespersec * ddur);
@@ -103,82 +101,30 @@ maxix = 0;
 %%%%% 
 %% 提取所有的局部显著点，保存为 maxes(i,:) = [t,f];
 
-
-T = 0*S;
-
-% 每个dB x dT 大小的矩阵内提取出一个最强点
-% 若该点大于邻域均值的Th倍，则保留
-dB = 12;
-dT = 32;
-Th = 5;
-
-% B = zeros(dB, dT);
-% shiftB = zeros(dB, dT);
-% Rect = zeros(size(S));
-% indB = 1;
-% indT = 1;
-% for ii= 1:floor(size(S,2)/dT)-1
-%     for jj = 1:floor(size(S,1)/dB)-1
-%         % 得到dB x dT 大小的矩阵
-%         B = S((jj*dB-dB+1):jj*dB,(ii*dT-dT+1):ii*dT);
-%         % 得到平移后dB x dT 大小的矩阵
-%         shiftB = S((jj*dB-dB/2+1):jj*dB+dB/2,(ii*dT-dT/2+1):ii*dT+dT/2);
-%         
-%         % 矩阵内提取出一个最强点
-%         [indB, indT] = find(B==max(max(B)));
-%         %若该点大于邻域均值的Th倍，则保留
-%         if(B(indB(1),indT(1))> Th*mean(mean(B)) && B(indB(1),indT(1))> Th*mean(mean(shiftB)))
-%             Rect(jj*dB-dB+indB(1),ii*dT-dT+indT(1)) = B(indB(1),indT(1));
-% 
-%             % 记录最强点的位置
-%             nmaxes = nmaxes + 1;
-%             maxes(2,nmaxes) = jj*dB-dB+indB(1);
-%             maxes(1,nmaxes) = ii*dT-dT+indT(1);
-%             maxes(3,nmaxes) = B(indB(1),indT(1));
-%         end
-%         
-%     end
-% end
-
-% Estimate for how many maxes we keep - < 30/sec (to preallocate array)
-% maxespersec = 100;
-% 
-% ddur = length(D)/targetSR;
-% nmaxkeep = round(maxespersec * ddur);
-% maxes = zeros(3,nmaxkeep);
-% nmaxes = 0;
-% maxix = 0;
-
-%%%%% 
-%% find all the local prominent peaks, store as maxes(i,:) = [t,f];
-
-%% overmasking factor?  Currently none.
 s_sup = 1.0;
 
-% initial threshold envelope based on peaks in first 10 frames
-sthresh = s_sup*spread(max(S(:,1:10),[],2),f_sd)';
+% 利用前10帧初始化峰值提取所使用的阈值
+sthresh = s_sup*spread(max(S(:,1:min(10,size(S,2))),[],2),f_sd)';
 
-% T stores the actual decaying threshold, for debugging
 T = 0*S;
 
 for i = 1:size(S,2)-1
   s_this = S(:,i);
   sdiff = max(0,(s_this - sthresh))';
-  % find local maxima
+  % 找出所有局部最大点
   sdiff = locmax(sdiff);
-  % (make sure last bin is never a local max since its index
-  % doesn't fit in 8 bits)
-  sdiff(end) = 0;  % i.e. bin 257 from the sgram
-  % take up to 5 largest
+ 
+  sdiff(end) = 0;  
+ 
   [vv,xx] = sort(sdiff, 'descend');
-  % (keep only nonzero)
+  
   xx = xx(vv>0);
-  % store those peaks and update the decay envelope
+
   nmaxthistime = 0;
   for j = 1:length(xx)
     p = xx(j);
     if nmaxthistime < maxpksperframe
-      % Check to see if this peak is under our updated threshold
+      % 大于阈值，保留该峰值点，且更新阈值
       if s_this(p) > sthresh(p)
         nmaxthistime = nmaxthistime + 1;
         nmaxes = nmaxes + 1;
@@ -194,10 +140,9 @@ for i = 1:size(S,2)-1
   sthresh = a_dec*sthresh;
 end
 
-% Backwards pruning of maxes
+% 重新从后面后向提取峰值点，只保留下前后向均能提取的峰值点
 maxes2 = [];
 nmaxes2 = 0;
-if bp > 0
 whichmax = nmaxes;
 sthresh = s_sup*spread(S(:,end),f_sd)';
 for i = (size(S,2)-1):-1:1
@@ -205,7 +150,6 @@ for i = (size(S,2)-1):-1:1
     p = maxes(2,whichmax);
     v = maxes(3,whichmax);
     if  v >= sthresh(p)
-      % keep this one
       nmaxes2 = nmaxes2 + 1;
       maxes2(:,nmaxes2) = [i;p];
       eww = exp(-0.5*(([1:length(sthresh)]'- p)/f_sd).^2);
@@ -217,11 +161,7 @@ for i = (size(S,2)-1):-1:1
 end
 
 maxes2 = fliplr(maxes2);
-else
- maxes2 = maxes;
- nmaxes2 =nmaxes;
-%T = Rect;
-end
+
 %% 整理峰值点形成显著点对，以作为音频哈希
   
 % 设定每个点最大允许点对数目
@@ -266,24 +206,18 @@ end
 maxes = maxes2;
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function Y = locmax(X)
-%  Y contains only the points in (vector) X which are local maxima
+%  提取 X 中的所有局部最大值
 
-% Make X a row
 X = X(:)';
 nbr = [X,X(end)] >= [X(1),X];
-% >= makes sure final bin is always zero
+% 通过差分点乘保留局部最大值，其他位置为0
 Y = X .* nbr(1:end-1) .* (1-nbr(2:end));
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function Y = spread(X,E)
-%  Each point (maxima) in X is "spread" (convolved) with the
-%  profile E; Y is the pointwise max of all of these.
-%  If E is a scalar, it's the SD of a gaussian used as the
-%  spreading function (default 4).
-% 2009-03-15 Dan Ellis dpwe@ee.columbia.edu
+%  对X应用窗函数E加窗
 
 if nargin < 2; E = 4; end
   

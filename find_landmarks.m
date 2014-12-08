@@ -1,28 +1,37 @@
 function [L,S,T,maxes] = find_landmarks(D,SR,N)
 % [L,S,T,maxes] = find_landmarks(D,SR,N)
-%   对音频波形D提取出频谱的显著点集合L
-%   输入：
-%   D 音频波形； SR 采样率； N 哈希密度（默认每秒生成5个）
-%   返回值：
-%   L 显著点的集合, 每点包含4列{起始时间 起始频率 结束频率 时间差}
-%   S 短时傅里叶谱的幅度
-%   T 各局部的峰值提取阈值
-%   maxes 所提取峰值点的时频位置
-
-
-if nargin < 3;  N = 7;  end %默认为 7 得到掩盖因子 a_dec = 0.998
-
-% 本算法依赖于查询音频与音频库中音频具有一定数量的相同显著点。
-% 显著点密度越大，越容易找到匹配（意味更短长度和音质更差的仍可匹配），
-% 但是指纹库的规模将增大
+%   Make a set of spectral feature pair landmarks from some audio data
+%   D is an audio waveform at sampling rate SR
+%   L returns as a set of landmarks, as rows of a 4-column matrix
+%   {start-time-col start-freq-row end-freq-row delta-time}
+%   N is the target hashes-per-sec (approximately; default 5)
+%   S returns the filtered log-magnitude surface
+%   T returns the decaying threshold surface
+%   maxes returns a list of the actual time-frequency peaks extracted.
 %
-% 影响所提取显著点个数的因素：
-%  A.  找出局部最大点的个数，其取决于
-%    A.1 扩散函数的宽度，当提取出一个显著点时用于抑制相邻点，即令若干相邻点幅度衰落
+%  REVISED VERSION FINDS PEAKS INCREMENTALLY IN TIME WITH DECAYING THRESHOLD
+% 
+% 2008-12-13 Dan Ellis dpwe@ee.columbia.edu
+
+if nargin < 3;  N = 7;  end % 7 to get a_dec = 0.998
+
+% The scheme relies on just a few landmarks being common to both
+% query and reference items.  The greater the density of landmarks,
+% the more like this is to occur (meaning that shorter and noisier
+% queries can be tolerated), but the greater the load on the
+% database holding the hashes.
+%
+% The factors influencing the number of landmarks returned are:
+%  A.  The number of local maxima found, which in turn depends on 
+%    A.1 The spreading width applied to the masking skirt from each
+%        found peak (gaussian half-width in frequency bins).  A
+%        larger value means fewer peaks found.
 f_sd = 30;
 
-%    A.2 掩盖因子a_dec，当提取出一个显著点时用于抑制相邻点，即令相邻点幅度衰落的程度
-% a_dec = 0.998;
+%    A.2 The decay rate of the masking skirt behind each peak
+%        (proportion per frame).  A value closer to one means fewer
+%        peaks found.
+%a_dec = 0.998;
 a_dec = 1-0.01*(N/35);
 % 0.999 -> 2.5
 % 0.998 -> 5 hash/sec
@@ -37,23 +46,42 @@ a_dec = 1-0.01*(N/35);
 % 0.98  -> 67
 % 0.97  -> 97
 
-%    A.3 每帧允许的最大的峰值点个数
+
+
+%    A.3 The maximum number of peaks allowed for each frame.  In
+%        practice, this is rarely reached, since most peaks fall
+%        below the masking skirt
 maxpksperframe = 5;
 
-%    A.4 高通滤波器参数，接近1意味只滤除缓慢变化部分
+%    A.4 The high-pass filter applied to the log-magnitude
+%        envelope, which is parameterized by the position of the
+%        single real pole.  A pole close to +1.0 results in a
+%        relatively flat high-pass filter that just removes very
+%        slowly varying parts; a pole closer to -1.0 introduces
+%        increasingly extreme emphasis of rapid variations, which
+%        leads to more peaks initially.
 hpf_pole = 0.98;
 
-%  B. 每个显著点形成的点对数量. 频谱图上目标区域的大小
-% 设定频率方向的大小
-targetdf = 31;  
+%  B. The number of pairs made with each peak.  All maxes within a
+%     "target region" following the seed max are made into pairs,
+%     so the larger this region is (in time and frequency), the
+%     more maxes there will be.  The target region is defined by a
+%     freqency half-width (in bins)
+targetdf = 31;  % +/- 50 bins in freq (LIMITED TO -32..31 IN LANDMARK2HASH)
 
-% 设定时间方向的大小
-targetdt = 63; 
+%     .. and a time duration (maximum look ahead)
+targetdt = 63;  % (LIMITED TO <64 IN LANDMARK2HASH)
+
+%     The actual frequency and time differences are quantized and
+%     packed into the final hash; if they exceed the limited size
+%     described above, the hashes become irreversible (aliased);
+%     however, in most cases they still work (since they are
+%     handled the same way for query and reference).
 
 
 verbose = 0;
 
-% 将音频 D 转化为单声道
+% Convert D to a mono row-vector
 [nr,nc] = size(D);
 if nr > nc
   D = D';
@@ -64,32 +92,40 @@ if nr > 1
   nr = 1;
 end
 
-% 将音频D重采样为8000Hz
+% Resample to target sampling rate
 targetSR = 8000;
 if (SR ~= targetSR)
   D = resample(D,targetSR,SR);
 end
 
-% 获取频谱特征
-% 短时傅里叶变换利用64 ms窗口(512点的 FFT) 
+%D_GPU = gpuArray(D);
+
+% Take spectral features
+% We use a 64 ms window (512 point FFT) for good spectral resolution
 fft_ms = 64;
 fft_hop = 32;
 nfft = round(targetSR/1000*fft_ms);
-%S = abs(specgram(D,nfft,targetSR,nfft,nfft-round(targetSR/1000*fft_hop)));
+S = abs(specgram(D,nfft,targetSR,nfft,nfft-round(targetSR/1000*fft_hop)));
 
-[S,F] = gammatonegram(D,targetSR);
-S = abs(S);
+% S_GPU = abs(specgram(D_GPU,nfft,targetSR,nfft,nfft-round(targetSR/1000*fft_hop)));
+% S = gather(S_GPU);
 
-% 转化为对数形式
+
+% convert to log domain, and emphasize onsets
 Smax = max(S(:));
+% Work on the log-magnitude surface
 S = log(max(Smax/1e6,S));
-% 将频谱幅度转化为0均值，以便高通滤波
+% Make it zero-mean, so the start-up transients for the filter are
+% minimized
 S = S - mean(S(:));
-% 对幅度谱应用高通滤波，消除平缓波动，强化突然跳动
+% This is just a high pass filter, applied in the log-magnitude
+% domain.  It blocks slowly-varying terms (like an AGC), but also 
+% emphasizes onsets.  Placing the pole closer to the unit circle 
+% (i.e. making the -.8 closer to -1) reduces the onset emphasis.
 S = (filter([1 -1],[1 -hpf_pole],S')');
 
 
-% 预设保留最大点的数量
+% Estimate for how many maxes we keep - < 30/sec (to preallocate array)
 maxespersec = 30;
 
 ddur = length(D)/targetSR;
@@ -99,32 +135,35 @@ nmaxes = 0;
 maxix = 0;
 
 %%%%% 
-%% 提取所有的局部显著点，保存为 maxes(i,:) = [t,f];
+%% find all the local prominent peaks, store as maxes(i,:) = [t,f];
 
+%% overmasking factor?  Currently none.
 s_sup = 1.0;
 
-% 利用前10帧初始化峰值提取所使用的阈值
-sthresh = s_sup*spread(max(S(:,1:min(10,size(S,2))),[],2),f_sd)';
+% initial threshold envelope based on peaks in first 10 frames
+sthresh = s_sup*spread(max(S(:,1:10),[],2),f_sd)';
 
+% T stores the actual decaying threshold, for debugging
 T = 0*S;
 
 for i = 1:size(S,2)-1
   s_this = S(:,i);
   sdiff = max(0,(s_this - sthresh))';
-  % 找出所有局部最大点
+  % find local maxima
   sdiff = locmax(sdiff);
- 
-  sdiff(end) = 0;  
- 
+  % (make sure last bin is never a local max since its index
+  % doesn't fit in 8 bits)
+  sdiff(end) = 0;  % i.e. bin 257 from the sgram
+  % take up to 5 largest
   [vv,xx] = sort(sdiff, 'descend');
-  
+  % (keep only nonzero)
   xx = xx(vv>0);
-
+  % store those peaks and update the decay envelope
   nmaxthistime = 0;
   for j = 1:length(xx)
     p = xx(j);
     if nmaxthistime < maxpksperframe
-      % 大于阈值，保留该峰值点，且更新阈值
+      % Check to see if this peak is under our updated threshold
       if s_this(p) > sthresh(p)
         nmaxthistime = nmaxthistime + 1;
         nmaxes = nmaxes + 1;
@@ -140,7 +179,7 @@ for i = 1:size(S,2)-1
   sthresh = a_dec*sthresh;
 end
 
-% 重新从后面后向提取峰值点，只保留下前后向均能提取的峰值点
+% Backwards pruning of maxes
 maxes2 = [];
 nmaxes2 = 0;
 whichmax = nmaxes;
@@ -150,6 +189,7 @@ for i = (size(S,2)-1):-1:1
     p = maxes(2,whichmax);
     v = maxes(3,whichmax);
     if  v >= sthresh(p)
+      % keep this one
       nmaxes2 = nmaxes2 + 1;
       maxes2(:,nmaxes2) = [i;p];
       eww = exp(-0.5*(([1:length(sthresh)]'- p)/f_sd).^2);
@@ -162,12 +202,12 @@ end
 
 maxes2 = fliplr(maxes2);
 
-%% 整理峰值点形成显著点对，以作为音频哈希
+%% Pack the maxes into nearby pairs = landmarks
   
-% 设定每个点最大允许点对数目
+% Limit the number of pairs that we'll accept from each peak
 maxpairsperpeak=3;
 
-% 显著点对 <starttime F1 endtime F2>
+% Landmark is <starttime F1 endtime F2>
 L = zeros(nmaxes2*maxpairsperpeak,4);
 
 nlmarks = 0;
@@ -180,15 +220,16 @@ for i =1:nmaxes2
   maxf = F1 + targetdf;
   matchmaxs = find((maxes2(1,:)>startt)&(maxes2(1,:)<maxt)&(maxes2(2,:)>minf)&(maxes2(2,:)<maxf));
   if length(matchmaxs) > maxpairsperpeak
-    % 若超过最大允许点对数目，只保留前面点对
+    % limit the number of pairs we make; take first ones, as they
+    % will be closest in time
     matchmaxs = matchmaxs(1:maxpairsperpeak);
   end
   for match = matchmaxs
     nlmarks = nlmarks+1;
     L(nlmarks,1) = startt;
     L(nlmarks,2) = F1;
-    L(nlmarks,3) = maxes2(2,match);  % 结束频率
-    L(nlmarks,4) = maxes2(1,match)-startt;  % 时间差分
+    L(nlmarks,3) = maxes2(2,match);  % frequency row
+    L(nlmarks,4) = maxes2(1,match)-startt;  % time column difference
   end
 end
 
@@ -202,22 +243,27 @@ if verbose
       num2str(nlmarks),' lmarks']);
 end
   
-
+% for debug return, return the pruned set of maxes
 maxes = maxes2;
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function Y = locmax(X)
-%  提取 X 中的所有局部最大值
+%  Y contains only the points in (vector) X which are local maxima
 
+% Make X a row
 X = X(:)';
 nbr = [X,X(end)] >= [X(1),X];
-% 通过差分点乘保留局部最大值，其他位置为0
+% >= makes sure final bin is always zero
 Y = X .* nbr(1:end-1) .* (1-nbr(2:end));
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function Y = spread(X,E)
-%  对X应用窗函数E加窗
+%  Each point (maxima) in X is "spread" (convolved) with the
+%  profile E; Y is the pointwise max of all of these.
+%  If E is a scalar, it's the SD of a gaussian used as the
+%  spreading function (default 4).
+% 2009-03-15 Dan Ellis dpwe@ee.columbia.edu
 
 if nargin < 2; E = 4; end
   

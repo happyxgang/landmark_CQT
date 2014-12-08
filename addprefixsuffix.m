@@ -1,6 +1,6 @@
 function Y = addprefixsuffix(X,P,S)
-%   ��cell����X�е�ÿ���ַ�������ǰ׺�ַ���P �ͺ�׺�ַ��� S��
-%   �õ� �µ�cell����Y
+%   对cell数组X中的每个字符串添加前缀字符串P 和后缀字符串 S，
+%   得到 新的cell数组Y
 
 
 if nargin < 3

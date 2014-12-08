@@ -1,9 +1,9 @@
 function R = get_hash_hits(H)
 % R = get_hash_hits(H)
-%   ���룺
-%   H ����ѯ��Ƶ����ȡ���Ĺ�ϣֵ
-%   ����ֵ��
-%    R ����ƥ�䣬ÿ��ƥ�������ָ�ƿ���ƥ�����š�ƥ��Ĺ�ϣ������ʱ��ƫ�ơ���ƥ��Ĺ�ϣ����
+%   输入：
+%   H 待查询音频中提取出的哈希值
+%   返回值：
+%    R 所有匹配，每个匹配包括：指纹库中匹配的序号、匹配的哈希数量、时间偏移、总匹配的哈希数量
 
 
 
@@ -20,7 +20,7 @@ nhtcols = size(HashTable,1);
 
 TIMESIZE=16384;
 
-Rsize = 1000;  % Ԥ����
+Rsize = 1000;  % 预分配
 R = zeros(Rsize,3);
 Rmax = 0;
 

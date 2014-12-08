@@ -1,8 +1,8 @@
 function [DM,SRO,TK,T] = illustrate_match(DQ,SR,FL,IX)
 % [DM,SRO,TK,T] = illustrate_match(DQ,SR,FL,IX)
-% ÑİÊ¾ÒôÆµÆ¥Åä
+% æ¼”ç¤ºéŸ³é¢‘åŒ¹é…
 
-PA = 'I:\mayday\';
+PA = '/home/kevin/Documents/mayday/';
 if nargin < 4;  IX = 1; end
 
 if isstr(DQ)
@@ -10,7 +10,7 @@ if isstr(DQ)
 end
 
 
-[R,Lm] = match_query(DQ,SR,IX);
+[R,Lm] = match_query_CQT(DQ,SR,IX);
 
 Lm = Lm( abs(Lm(:,5)-R(IX,3)) < 1 ,:);
 
@@ -25,6 +25,7 @@ show_CQTlandmarks(DQ,SR,Lq);
 tbase = 0.032;  
 matchtrk = R(IX,1);
 matchdt = R(IX,3);
+p = [PA FL{matchtrk}]
 [d,SRO] = wavread([PA FL{matchtrk}]);
 Ld = find_CQTlandmarks(d,SRO,dens);
 

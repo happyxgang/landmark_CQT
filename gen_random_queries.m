@@ -1,14 +1,14 @@
 function [Q,SR] = gen_random_queries(IDs,Dur,Noise,Seed)
 % [Q,SR] = gen_random_queries(IDs,Dur,Noise,Seed)
-% Éú³É´ó¹æÄ£µþ¼ÓÔëÉùºóµÄ²âÊÔÒôÀÖ¼¯ºÏQ
-% ÊäÈë£º
-% IDs ×Ö·û´®Êý×é£¬ÒôÆµ¿âÖÐÎÄ¼þÃû¼¯ºÏ
-% Dur Éú³ÉÃ¿¸öÒôÆµ²âÊÔÆ¬¶Î³¤¶ÈÎªDurÃë
-% Noise µþ¼ÓÔëÉùÇ¿¶È
-% Seed Ëæ»úÉú³ÉÆ÷ÖÖ×Ó
-% ·µ»Ø£º
-% Q µþ¼ÓÔëÉùºóµÄ²âÊÔÒôÀÖ¼¯ºÏ
-% SR ²ÉÑùÂÊ
+% ç”Ÿæˆå¤§è§„æ¨¡å åŠ å™ªå£°åŽçš„æµ‹è¯•éŸ³ä¹é›†åˆQ
+% è¾“å…¥ï¼š
+% IDs å­—ç¬¦ä¸²æ•°ç»„ï¼ŒéŸ³é¢‘åº“ä¸­æ–‡ä»¶åé›†åˆ
+% Dur ç”Ÿæˆæ¯ä¸ªéŸ³é¢‘æµ‹è¯•ç‰‡æ®µé•¿åº¦ä¸ºDurç§’
+% Noise å åŠ å™ªå£°å¼ºåº¦
+% Seed éšæœºç”Ÿæˆå™¨ç§å­
+% è¿”å›žï¼š
+% Q å åŠ å™ªå£°åŽçš„æµ‹è¯•éŸ³ä¹é›†åˆ
+% SR é‡‡æ ·çŽ‡
 
 
 nIDs = length(IDs);
@@ -37,17 +37,17 @@ for i = 1:length(IDs)
     [d,sr] = wavread(fname);
   end
   if size(d,2) == 2
-    % ÈôÊÇË«ÉùµÀÔò×ªÎªµ¥ÉùµÀ
+    % è‹¥æ˜¯åŒå£°é“åˆ™è½¬ä¸ºå•å£°é“
     d = mean(d,2);
   end
   
   ld = length(d);
   qlen = round(Dur * sr);
-  % qlen´óÓÚÒôÆµ³¤¶ÈÊ±qlen=ld-1
+  % qlenå¤§äºŽéŸ³é¢‘é•¿åº¦æ—¶qlen=ld-1
   if ld<qlen
       qlen=ld-1;
   end
-  % Ëæ»úÑ¡ÔñÒôÆµÆðµã
+  % éšæœºé€‰æ‹©éŸ³é¢‘èµ·ç‚¹
   sp = round((ld - qlen)*rand(1));
   Q{i} = d(sp + [1:qlen]) + Noise * randn(qlen,1);
   

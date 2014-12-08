@@ -51,7 +51,7 @@ for k=1:n
         fprintf(fd,'Origin:%s\n', dir_files(k).name);
         fprintf(fd,'Match: %s\n',tks{R(1,1)});
         fprintf(fd,'Time: %s sec\n',num2str(R(1,3)*0.032));
-        fprintf(fd,'fp:%d\t%d\t%d\t%d\t\n', R(1,1),R(1,2),R(1,3),R(1,4));
+        fprintf(fd,'%d\t%d\t%d\t%d\t\n', R(1,1),R(1,2),R(1,3),R(1,4));
         if R(1,2)<8
             disp('*** No found in the database ***');
         else

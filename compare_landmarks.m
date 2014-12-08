@@ -1,6 +1,6 @@
-%% ±È½Ïlandmarks ºÍ CQTlandmarks
+%% æ¯”è¾ƒlandmarks å’Œ CQTlandmarks
 close all;
-name = 'Beyond ¹â»ÔËêÔÂ';
+name = 'Beyond å…‰è¾‰å²æœˆ';
 
 dens = 10;
 [DQ,SR] = wavread(['H:\WaveMusic\' name '.wav'],[1 44100*30]);

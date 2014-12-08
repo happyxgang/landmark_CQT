@@ -1,5 +1,5 @@
-%% Éú³É¼ÓÔØÒôÆµ²¢±£´æ
-fname = 'D:\wav\Beyond - ¹â»ÔËêÔÂ.wav';
+%% ç”ŸæˆåŠ è½½éŸ³é¢‘å¹¶ä¿å­˜
+fname = 'D:\wav\Beyond - å…‰è¾‰å²æœˆ.wav';
 [d,sr] = wavread(fname);
 
 [p,name,e] = fileparts(fname);
@@ -9,15 +9,15 @@ Dur = 20;
 Noise = 0.1;
 ld = length(d);
 qlen = round(Dur * sr);
-% qlen´óÓÚÒôÆµ³¤¶ÈÊ±qlen=ld-1
+% qlenå¤§äºéŸ³é¢‘é•¿åº¦æ—¶qlen=ld-1
 if ld<qlen
     qlen=ld-1;
 end
-% Ëæ»úÑ¡ÔñÒôÆµÆğµã
+% éšæœºé€‰æ‹©éŸ³é¢‘èµ·ç‚¹
 sp = round((ld - qlen)*rand(1));
 y = d(sp + [1:qlen]) + Noise * randn(qlen,1);
 
-%±£´æ¼ÓÔëÒôÆµÓÃÓÚ±È½Ï
+%ä¿å­˜åŠ å™ªéŸ³é¢‘ç”¨äºæ¯”è¾ƒ
 wavwrite(d(sp + [1:qlen]),sr,[prefix, name, '_clip',e]);
 wavwrite(y,sr,[prefix, name, '_noise',e]);
 disp(['Generate ', prefix, name, '_clip',e]);

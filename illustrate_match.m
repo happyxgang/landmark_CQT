@@ -1,8 +1,8 @@
 function [DM,SRO,TK,T] = illustrate_match(DQ,SR,FL,IX)
 % [DM,SRO,TK,T] = illustrate_match(DQ,SR,FL,IX)
-% ÑİÊ¾ÒôÆµÆ¥Åä
+% æ¼”ç¤ºéŸ³é¢‘åŒ¹é…
 
-PA = 'D:\wav\';
+global PA;
 if nargin < 4;  IX = 1; end
 
 if isstr(DQ)
@@ -25,6 +25,7 @@ show_landmarks(DQ,SR,Lq);
 tbase = 0.032;  
 matchtrk = R(IX,1);
 matchdt = R(IX,3);
+name = [PA FL{matchtrk}]
 [d,SRO] = wavread([PA FL{matchtrk}]);
 Ld = find_landmarks(d,SRO,dens);
 

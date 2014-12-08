@@ -1,4 +1,4 @@
-function [N,T] = add_tracks(D,SR,ID)
+function [N,T] = add_tracks_CQT(D,SR,ID)
 % [N,T] = add_tracks(D,SR,ID)
 %    添加歌曲组D到指纹数据库
 %    输入：
@@ -8,7 +8,8 @@ function [N,T] = add_tracks(D,SR,ID)
 %
 %================================
 %指定音频库的所在目录，注意以\结束
-PA = 'i:\mayday\';
+%PA = 'i:\mayday\';
+global PA;
 
 % 预设置哈希密度（每秒产生几个哈希）
 dens = 10;
@@ -16,7 +17,7 @@ dens = 10;
 
 if isnumeric(D)
   % 提取音频片段D的显著点，并将其转化为哈希值H
-  H = landmark2hash(find_landmarks(D,SR,dens),ID);
+  H = landmark2hash(find_CQTlandmarks(D,SR,dens),ID);
   % 将哈希值H保存到指纹库
   record_hashes(H);
   N = length(H);
@@ -26,8 +27,9 @@ elseif ischar(D)
     ID = SR;
   end
   % 读入音频波形
+  path = [PA D]
   [D,SR] = wavread([PA D]);
-  [N,T] = add_tracks(D,SR,ID);
+  [N,T] = add_tracks_CQT(D,SR,ID);
 elseif iscell(D)
   
   disp(['Target density = ',num2str(dens),' hashes/sec']);
@@ -51,7 +53,7 @@ elseif iscell(D)
   T = 0;
   for i = (skip+1):nd
     disp(['Adding #',num2str(ID(i)),' ',D{i},' ...']);
-    [n,t] = add_tracks(D{i},ID(i));
+    [n,t] = add_tracks_CQT(D{i},ID(i));
     N = N + n;
     T = T + t;
   end

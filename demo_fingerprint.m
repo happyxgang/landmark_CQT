@@ -1,55 +1,58 @@
 %% demo_fingerprint.m
-%% ÒôÆµÖ¸ÎÆÏµÍ³ÑİÊ¾£¬°üÀ¨Éú³ÉÖ¸ÎÆ¿âHashDB.matºÍ¶ÔÊäÈëµÄÒôÆµÆ¬¶Î²éÑ¯
-%% Éú³ÉÒôÆµÖ¸ÎÆ¿â±£´æµ½HashDB.mat
-% Éú³ÉÒôÀÖ¿âÌõÄ¿ÁĞ±í£¬ÇëÌæ»»ÏàÓ¦±¾µØÒôÀÖ¿âËùÔÚÄ¿Â¼
-list= struct2cell(dir('i:\mayday\*.wav'));
-tks = list(1,:);
-
-% ³õÊ¼»¯Ö¸ÎÆ¿âÊı×é 
-clear_hashtable
-
-% ½«ÒôÆµÁĞ±ítksµÄÒôÆµÌí¼Óµ½Ö¸ÎÆ¿â
-add_tracks(tks);
-
-% ½«Ö¸ÎÆ±£´æµ½HashDB.mat
+%% éŸ³é¢‘æŒ‡çº¹ç³»ç»Ÿæ¼”ç¤ºï¼ŒåŒ…æ‹¬ç”ŸæˆæŒ‡çº¹åº“HashDB.matå’Œå¯¹è¾“å…¥çš„éŸ³é¢‘ç‰‡æ®µæŸ¥è¯¢
+%% ç”ŸæˆéŸ³é¢‘æŒ‡çº¹åº“ä¿å­˜åˆ°HashDB.mat
+% ç”ŸæˆéŸ³ä¹åº“æ¡ç›®åˆ—è¡¨ï¼Œè¯·æ›¿æ¢ç›¸åº”æœ¬åœ°éŸ³ä¹åº“æ‰€åœ¨ç›®å½•
+ list= struct2cell(dir('i:\mayday\*.wav'));
+ tks = list(1,:);
+% 
+% % åˆå§‹åŒ–æŒ‡çº¹åº“æ•°ç»„ 
+ clear_hashtable
+% 
+% % å°†éŸ³é¢‘åˆ—è¡¨tksçš„éŸ³é¢‘æ·»åŠ åˆ°æŒ‡çº¹åº“
+ add_tracks(tks);
+% 
+% % å°†æŒ‡çº¹ä¿å­˜åˆ°HashDB.mat
 global HashTable HashTableCounts
 save HashDB.mat HashTable HashTableCounts tks
+load HashDB.mat HashTable HashTableCounts tks
+%% æ¼”ç¤ºéŸ³é¢‘åŒ¹é…
 
-%% ÑİÊ¾ÒôÆµÆ¥Åä
-
-% ¶ÁÈë´ı²éÑ¯µÄÆ¬¶Î
+% è¯»å…¥å¾…æŸ¥è¯¢çš„ç‰‡æ®µ
 fs = 8000;
 test_dir='I:\id_testfiles\';
 dir_files = dir(test_dir);
 
-% ¶ÁÈë´ı²éÑ¯µÄÆ¬¶Î
+% è¯»å…¥å¾…æŸ¥è¯¢çš„ç‰‡æ®µ
 fs = 8000;
 n = length(dir_files);
+count = 0;
+duration = 10;
 for k=1:n
     %&& (dir_files(k).name(end-3,end) == 'wav'
     if (length(dir_files(k).name) > 4) && (strcmp(dir_files(k).name(end-2:end), 'wav'))
         [dt,srt] = wavread([test_dir dir_files(k).name]);
-        %[dt,srt] = wavread('F:\RecordMusic\Beyond ¹â»ÔËêÔÂ.wav',[1 fs*15]);
-
-        %  ²éÑ¯Æ¥Åä
+        %[dt,srt] = wavread('F:\RecordMusic\Beyond å…‰è¾‰å²æœˆ.wav',[1 fs*15]);
+        dt=get_segment(dt,srt,0,duration);
+        %  æŸ¥è¯¢åŒ¹é…
         R = match_query(dt,srt);
-        % R ·µ»ØËùÓĞÆ¥Åä£¬°´Æ¥Åä¹şÏ£µÄÊıÁ¿½µĞòÅÅÁĞ¡£
-        % RµÄÃ¿ĞĞ¶ÔÓ¦Ò»¸öÆ¥Åä£¬°üÀ¨4¸öÊıÖµ£ºÖ¸ÎÆ¿âÖĞÆ¥ÅäµÄĞòºÅ¡¢Æ¥ÅäµÄ¹şÏ£ÊıÁ¿¡¢Ê±¼äÆ«ÒÆ¡¢×ÜÆ¥ÅäµÄ¹şÏ£ÊıÁ¿
-        if R(1,2)<1
-            disp('*** No found in the database ***');
+        % R è¿”å›æ‰€æœ‰åŒ¹é…ï¼ŒæŒ‰åŒ¹é…å“ˆå¸Œçš„æ•°é‡é™åºæ’åˆ—ã€‚
+        % Rçš„æ¯è¡Œå¯¹åº”ä¸€ä¸ªåŒ¹é…ï¼ŒåŒ…æ‹¬4ä¸ªæ•°å€¼ï¼šæŒ‡çº¹åº“ä¸­åŒ¹é…çš„åºå·ã€åŒ¹é…çš„å“ˆå¸Œæ•°é‡ã€æ—¶é—´åç§»ã€æ€»åŒ¹é…çš„å“ˆå¸Œæ•°é‡
+        if R(1,2)<8
+            %disp('*** No found in the database ***');
         else
             disp(['Match: ',tks{R(1,1)},' at ',num2str(R(1,3)*0.032),' sec']);
             R(1,:)
+            count=count+1;
         end
-        % 8185  35  3056  36 ±íÊ¾Ö¸ÎÆ¿âÖĞµÄ tks{8185}ÓĞ35 ¸öÆ¥Åä¹şÏ££¬ÔÚµÚ3056
-        % Ö¡£¨Ã¿Ö¡32ms£©Æ¥ÅäÉÏ£¬×ÜÆ¥Åä¹şÏ£ÊıÎª36
+        % 8185  35  3056  36 è¡¨ç¤ºæŒ‡çº¹åº“ä¸­çš„ tks{8185}æœ‰35 ä¸ªåŒ¹é…å“ˆå¸Œï¼Œåœ¨ç¬¬3056
+        % å¸§ï¼ˆæ¯å¸§32msï¼‰åŒ¹é…ä¸Šï¼Œæ€»åŒ¹é…å“ˆå¸Œæ•°ä¸º36
 
-        % ÏÔÊ¾Æ¥ÅäÇé¿ö£¨±ØĞëÓĞÉú³ÉÖ¸ÎÆ¿âµÄÒôÀÖ´æÔÚÇé¿öÏÂ£©£¬Æ¥ÅäµÄÏÔÖøµãÊ¹ÓÃÂÌÉ«±ê¼Ç
+        % æ˜¾ç¤ºåŒ¹é…æƒ…å†µï¼ˆå¿…é¡»æœ‰ç”ŸæˆæŒ‡çº¹åº“çš„éŸ³ä¹å­˜åœ¨æƒ…å†µä¸‹ï¼‰ï¼ŒåŒ¹é…çš„æ˜¾è‘—ç‚¹ä½¿ç”¨ç»¿è‰²æ ‡è®°
         % illustrate_match(dt,srt,tks);
         % colormap(1-gray)
 %%
     end
 end
-
+count
 
 

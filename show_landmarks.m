@@ -1,6 +1,6 @@
 function show_landmarks(D,SR,L,T,C)
 % show_landmarks(D,SR,L[,T,C])
-%    ¶ÔÒôÆµDµÄÆµÆ×Í¼±ê¼ÇÏÔÖøµã
+%    å¯¹éŸ³é¢‘Dçš„é¢‘è°±å›¾æ ‡è®°æ˜¾è‘—ç‚¹
 
 
 
@@ -10,8 +10,12 @@ end
 if nargin < 5
   C = 'o-r';
 end
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+L = find_landmarks(D,8000);
+%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 targetSR = 8000;
+
 
 fft_ms = 64;
 nfft = round(targetSR/1000*fft_ms);
@@ -29,7 +33,7 @@ if (size(D,1)<3) || (size(D,2)<3)
 
    if length(D) > 0
 
-   %%%%%%%%´Ë²¿·ÖÓëfind_landmarksÖÐÏàÍ¬
+   %%%%%%%%æ­¤éƒ¨åˆ†ä¸Žfind_landmarksä¸­ç›¸åŒ
 
      if size(D,1) > size(D,2)
        D = D';
@@ -53,6 +57,7 @@ if (size(D,1)<3) || (size(D,2)<3)
 else
   S = D;
 end
+subplot(211)
 
 if length(D) > 0
    
@@ -68,6 +73,8 @@ if length(D) > 0
 end
   
 hold on
+
+
 
 for i = 1:size(L,1);
   lrow = L(i,:);
@@ -89,3 +96,8 @@ if length(T) == 2
   a = axis;
   axis([T(1) T(2) a(3) a(4)]);
 end
+
+
+subplot(212)
+
+

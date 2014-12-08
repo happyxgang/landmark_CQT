@@ -1,0 +1,300 @@
+result:true
+Origin:五月天 - 人生海海.wav
+Match: 五月天 - 人生海海.wav
+Time: 134.944 sec
+fp:1	36	4217	95	
+result:true
+Origin:五月天 - 仓颉.wav
+Match: 五月天 - 仓颉.wav
+Time: 148.96 sec
+fp:2	58	4655	171	
+result:true
+Origin:五月天 - 你不是真正的快乐 - Live.2012上海演唱会.wav
+Match: 五月天 - 你不是真正的快乐 - Live.2012上海演唱会.wav
+Time: 35.936 sec
+fp:3	26	1123	156	
+result:true
+Origin:五月天 - 你不是真正的快乐.wav
+Match: 五月天 - 你不是真正的快乐.wav
+Time: 2.976 sec
+fp:4	37	93	156	
+result:true
+Origin:五月天 - 倔强 - 2005世界巡回演唱会.wav
+Match: 五月天 - 倔强 - 2005世界巡回演唱会.wav
+Time: 140 sec
+fp:5	58	4375	117	
+result:true
+Origin:五月天 - 倔强.wav
+Match: 五月天 - 倔强.wav
+Time: 120.96 sec
+fp:6	24	3780	68	
+result:true
+Origin:五月天 - 出头天.wav
+Match: 五月天 - 出头天.wav
+Time: 62.944 sec
+fp:7	26	1967	55	
+result:true
+Origin:五月天 - 听不到.wav
+Match: 五月天 - 听不到.wav
+Time: 24.96 sec
+fp:9	12	780	128	
+result:true
+Origin:五月天 - 咸鱼.wav
+Match: 五月天 - 咸鱼.wav
+Time: 83.008 sec
+fp:10	44	2594	119	
+result:false
+Origin:五月天 - 回来吧.wav
+Match: 五月天 - 你不是真正的快乐.wav
+Time: 265.344 sec
+fp:4	7	8292	335	
+result:true
+Origin:五月天 - 夜访吸血鬼 - 现场1.wav
+Match: 五月天 - 夜访吸血鬼 - 现场1.wav
+Time: 49.984 sec
+fp:14	42	1562	101	
+result:true
+Origin:五月天 - 夜访吸血鬼.wav
+Match: 五月天 - 夜访吸血鬼.wav
+Time: 75.008 sec
+fp:15	36	2344	103	
+result:true
+Origin:五月天 - 天使 - 天使天堂的五个朋友演唱会.wav
+Match: 五月天 - 天使 - 天使天堂的五个朋友演唱会.wav
+Time: 92.928 sec
+fp:16	23	2904	82	
+result:true
+Origin:五月天 - 天使.wav
+Match: 五月天 - 天使.wav
+Time: 45.984 sec
+fp:17	31	1437	83	
+result:true
+Origin:五月天 - 天天想你 - 现场1.wav
+Match: 五月天 - 天天想你 - 现场1.wav
+Time: 118.912 sec
+fp:18	7	3716	75	
+result:true
+Origin:五月天 - 如烟.wav
+Match: 五月天 - 如烟.wav
+Time: 49.984 sec
+fp:19	8	1562	55	
+result:true
+Origin:五月天 - 孙悟空.wav
+Match: 五月天 - 孙悟空.wav
+Time: 66.944 sec
+fp:20	9	2092	47	
+result:false
+Origin:五月天 - 小太阳.wav
+Match: 五月天 - 小小的太阳.wav
+Time: 14.944 sec
+fp:22	30	467	98	
+result:false
+Origin:五月天 - 小小的太阳.wav
+Match: 五月天 - 小太阳.wav
+Time: 36.96 sec
+fp:21	13	1155	89	
+result:true
+Origin:五月天 - 小时候.wav
+Match: 五月天 - 小时候.wav
+Time: 4.96 sec
+fp:23	10	155	82	
+result:true
+Origin:五月天 - 干杯.wav
+Match: 五月天 - 干杯.wav
+Time: 136.96 sec
+fp:24	55	4280	163	
+result:true
+Origin:五月天 - 开天窗.wav
+Match: 五月天 - 开天窗.wav
+Time: 95.936 sec
+fp:25	41	2998	137	
+result:true
+Origin:五月天 - 彩虹.wav
+Match: 五月天 - 彩虹.wav
+Time: 95.936 sec
+fp:26	41	2998	85	
+result:true
+Origin:五月天 - 志明与春娇 - 现场1.wav
+Match: 五月天 - 志明与春娇 - 现场1.wav
+Time: -1.6 sec
+fp:27	4	-50	109	
+result:false
+Origin:五月天 - 志明与春娇.wav
+Match: 五月天 - 我不愿让你一个人.wav
+Time: 236.608 sec
+fp:31	7	7394	143	
+result:true
+Origin:五月天 - 忘词.wav
+Match: 五月天 - 忘词.wav
+Time: 20.96 sec
+fp:29	7	655	69	
+result:true
+Origin:五月天 - 恒星的恒心.wav
+Match: 五月天 - 恒星的恒心.wav
+Time: 40 sec
+fp:30	16	1250	120	
+result:false
+Origin:五月天 - 我不愿让你一个人.wav
+Match: 五月天 - 温柔 - 温柔版.wav
+Time: 188.608 sec
+fp:48	4	5894	92	
+result:true
+Origin:五月天 - 我们.wav
+Match: 五月天 - 我们.wav
+Time: 52.992 sec
+fp:32	18	1656	49	
+result:true
+Origin:五月天 - 我又初恋了.wav
+Match: 五月天 - 我又初恋了.wav
+Time: 17.92 sec
+fp:33	12	560	45	
+result:true
+Origin:五月天 - 我心中尚未崩坏的地方.wav
+Match: 五月天 - 我心中尚未崩坏的地方.wav
+Time: 119.744 sec
+fp:34	3	3742	41	
+result:true
+Origin:五月天 - 拥抱 - 天空之城演唱会.wav
+Match: 五月天 - 拥抱 - 天空之城演唱会.wav
+Time: 56.992 sec
+fp:35	9	1781	55	
+result:true
+Origin:五月天 - 拥抱.wav
+Match: 五月天 - 拥抱.wav
+Time: 108.992 sec
+fp:36	32	3406	72	
+result:true
+Origin:五月天 - 时光机.wav
+Match: 五月天 - 时光机.wav
+Time: 88.896 sec
+fp:39	31	2778	59	
+result:true
+Origin:五月天 - 星空.wav
+Match: 五月天 - 星空.wav
+Time: 76.032 sec
+fp:40	7	2376	66	
+result:false
+Origin:五月天 - 春天的吶喊.wav
+Match: 五月天 - 春天的呐喊.wav
+Time: 82.72 sec
+fp:42	17	2585	29	
+result:true
+Origin:五月天 - 春天的呐喊.wav
+Match: 五月天 - 春天的呐喊.wav
+Time: 71.968 sec
+fp:42	47	2249	130	
+result:true
+Origin:五月天 - 最重要的小事.wav
+Match: 五月天 - 最重要的小事.wav
+Time: 44.992 sec
+fp:43	13	1406	60	
+result:true
+Origin:五月天 - 武装.wav
+Match: 五月天 - 武装.wav
+Time: 100.992 sec
+fp:44	18	3156	46	
+result:true
+Origin:五月天 - 洋葱.wav
+Match: 五月天 - 洋葱.wav
+Time: 96 sec
+fp:45	34	3000	62	
+result:true
+Origin:五月天 - 洗衣机.wav
+Match: 五月天 - 洗衣机.wav
+Time: 108.928 sec
+fp:46	11	3404	39	
+result:true
+Origin:五月天 - 温柔 - 五月天创造小巨蛋dna Live.wav
+Match: 五月天 - 温柔 - 五月天创造小巨蛋dna Live.wav
+Time: 178.816 sec
+fp:47	5	5588	138	
+result:true
+Origin:五月天 - 温柔 - 温柔版.wav
+Match: 五月天 - 温柔 - 温柔版.wav
+Time: 109.888 sec
+fp:48	5	3434	79	
+result:true
+Origin:五月天 - 温柔.wav
+Match: 五月天 - 温柔.wav
+Time: 100.992 sec
+fp:49	8	3156	33	
+result:false
+Origin:五月天 - 燕尾蝶 - 现场1.wav
+Match: 五月天 - 爱情万岁.wav
+Time: 93.824 sec
+fp:51	3	2932	231	
+result:true
+Origin:五月天 - 爱情万岁.wav
+Match: 五月天 - 爱情万岁.wav
+Time: 45.952 sec
+fp:51	36	1436	129	
+result:true
+Origin:五月天 - 爱情的模样.wav
+Match: 五月天 - 爱情的模样.wav
+Time: 25.92 sec
+fp:52	10	810	71	
+result:false
+Origin:五月天 - 疯狂世界 - 2004天空之城复出演唱会.wav
+Match: 五月天 - 爱情万岁.wav
+Time: 190.592 sec
+fp:51	6	5956	221	
+result:true
+Origin:五月天 - 疯狂世界.wav
+Match: 五月天 - 疯狂世界.wav
+Time: 73.92 sec
+fp:54	12	2310	62	
+result:true
+Origin:五月天 - 相信.wav
+Match: 五月天 - 相信.wav
+Time: 72 sec
+fp:55	3	2250	34	
+result:false
+Origin:五月天 - 知足 - 专辑：《离开地球表面 Jump》.wav
+Match: 五月天 - 夜访吸血鬼.wav
+Time: 7.744 sec
+fp:15	5	242	47	
+result:false
+Origin:五月天 - 知足.wav
+Match: 五月天 - 离开地球表面.wav
+Time: 111.392 sec
+fp:58	2	3481	43	
+result:true
+Origin:五月天 - 离开地球表面.wav
+Match: 五月天 - 离开地球表面.wav
+Time: 108.992 sec
+fp:58	6	3406	59	
+result:false
+Origin:五月天 - 私奔到月球.wav
+Match: 五月天 - 春天的吶喊.wav
+Time: 92.384 sec
+fp:41	3	2887	31	
+result:false
+Origin:五月天 - 突然好想你 - D.N.A创造演唱会.wav
+Match: 五月天 - 温柔 - 五月天创造小巨蛋dna Live.wav
+Time: 294.112 sec
+fp:47	3	9191	70	
+result:true
+Origin:五月天 - 突然好想你.wav
+Match: 五月天 - 突然好想你.wav
+Time: 56.992 sec
+fp:61	8	1781	41	
+result:false
+Origin:五月天 - 笑忘书.wav
+Match: 五月天 - 忘词.wav
+Time: 4.32 sec
+fp:29	2	135	49	
+result:false
+Origin:五月天 - 笑忘歌.wav
+Match: 五月天 - 你不是真正的快乐.wav
+Time: 98.272 sec
+fp:4	2	3071	33	
+result:false
+Origin:五月天 - 第二人生.wav
+Match: 五月天 - 你不是真正的快乐.wav
+Time: -4.832 sec
+fp:4	4	-151	52	
+result:false
+Origin:五月天 - 纯真.wav
+Match: 五月天 - 你不是真正的快乐 - Live.2012上海演唱会.wav
+Time: 11.328 sec
+fp:3	3	354	75	

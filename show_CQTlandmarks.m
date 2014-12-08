@@ -1,6 +1,6 @@
 function show_CQTlandmarks(D,SR,L,T,C)
 % show_landmarks(D,SR,L[,T,C])
-%    ¶ÔÒôÆµDµÄÆµÆ×Í¼±ê¼ÇÏÔÖøµã
+%    å¯¹éŸ³é¢‘Dçš„é¢‘è°±å›¾æ ‡è®°æ˜¾è‘—ç‚¹
 
 
 
@@ -10,7 +10,7 @@ end
 if nargin < 5
   C = 'o-r';
 end
-
+%L = find_CQTlandmarks(D,SR);
 targetSR = 8000;
 
 fft_ms = 64;
@@ -29,7 +29,7 @@ if (size(D,1)<3) || (size(D,2)<3)
 
    if length(D) > 0
 
-   %%%%%%%%´Ë²¿·ÖÓëfind_landmarksÖÐÏàÍ¬
+   %%%%%%%%æ­¤éƒ¨åˆ†ä¸Žfind_landmarksä¸­ç›¸åŒ
 
      if size(D,1) > size(D,2)
        D = D';
@@ -45,16 +45,16 @@ if (size(D,1)<3) || (size(D,2)<3)
 
      S = abs(specgram(D,nfft,targetSR,nfft,nfft-nfft/my_win_overlap));
   
-% % ×ª»¯Îª¶ÔÊýÐÎÊ½
+% % è½¬åŒ–ä¸ºå¯¹æ•°å½¢å¼
 % Smax = max(S(:));
 % S = log(max(Smax/1e6,S));
-% % ½«ÆµÆ×·ù¶È×ª»¯Îª0¾ùÖµ£¬ÒÔ±ã¸ßÍ¨ÂË²¨
+% % å°†é¢‘è°±å¹…åº¦è½¬åŒ–ä¸º0å‡å€¼ï¼Œä»¥ä¾¿é«˜é€šæ»¤æ³¢
 % S = S - mean(S(:));
-% Éú³ÉÓ³Éä¾ØÕó
+% ç”Ÿæˆæ˜ å°„çŸ©é˜µ
 % [M,N] = logfmap(257,6,129);
 [M,N] = logfmap(257,6,65);
-% ½«257 FFT bins À©Õ¹Îª 162 log-F bins
-% ½øÐÐÓ³Éä
+% å°†257 FFT bins æ‰©å±•ä¸º 162 log-F bins
+% è¿›è¡Œæ˜ å°„
 MS = M*S;
 
 S = MS;

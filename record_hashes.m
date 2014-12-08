@@ -1,16 +1,16 @@
 function N = record_hashes(H)
 % N = record_hashes(H)
-%   ±£´æÖ¸ÎÆ¼¯ºÏµ½Ö¸ÎÆÊı¾İ¿â
-%   ÊäÈë£º
-%   H Ö¸ÎÆ¼¯ºÏ£¬Ã¿¸öÖ¸ÎÆÓÉÈı²¿·Ö×é³É<ID ÆğÊ¼Ê±¼ä ÏÔÖøµãµÄ¹şÏ£Öµ>
-%   ·µ»ØÖµ£º
-%   N ±£´æµÄÖ¸ÎÆÊıÄ¿
+%   ä¿å­˜æŒ‡çº¹é›†åˆåˆ°æŒ‡çº¹æ•°æ®åº“
+%   è¾“å…¥ï¼š
+%   H æŒ‡çº¹é›†åˆï¼Œæ¯ä¸ªæŒ‡çº¹ç”±ä¸‰éƒ¨åˆ†ç»„æˆ<ID èµ·å§‹æ—¶é—´ æ˜¾è‘—ç‚¹çš„å“ˆå¸Œå€¼>
+%   è¿”å›å€¼ï¼š
+%   N ä¿å­˜çš„æŒ‡çº¹æ•°ç›®
 %   ID 24 bit
-%   ÆğÊ¼Ê±¼ä 8 bit
+%   èµ·å§‹æ—¶é—´ 8 bit
 
 
 
-% Ê¹ÓÃÈ«¾ÖÊı×é±£´æÖ¸ÎÆºÍÖ¸ÎÆÊıÄ¿
+% ä½¿ç”¨å…¨å±€æ•°ç»„ä¿å­˜æŒ‡çº¹å’ŒæŒ‡çº¹æ•°ç›®
 global HashTable HashTableCounts
 
 
@@ -25,11 +25,11 @@ TIMESIZE = 16384;
 for i=1:nhash
   song = H(i,1);
   toffs = mod(round(H(i,2)), TIMESIZE);
-  hash = 1+H(i,3);  % ±ÜÃâ¹şÏ£ÖµÎª0
+  hash = 1+H(i,3);  % é¿å…å“ˆå¸Œå€¼ä¸º0
   htcol = HashTable(:,hash);
   nentries =  HashTableCounts(hash) + 1;
   if nentries <= maxnentries
-	% ½«hash±£´æµ½ÏÂÒ»Î»ÖÃ
+	% å°†hashä¿å­˜åˆ°ä¸‹ä¸€ä½ç½®
 	r = nentries;
   else
     r = ceil(nentries*rand(1));
